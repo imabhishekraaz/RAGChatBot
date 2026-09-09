@@ -18,6 +18,7 @@
 ## Create te Routes
 - Create the route for the user query.
 - create the routes for the 
-    - Login
-    - Signup
-    - query
+    - @POST - Login
+    - @GET  - Signup
+    - @POST - query
+    
