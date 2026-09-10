@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import MainPage from './pages/MainPage/MainPage'
 import Login from './pages/Login/Login'
+import Chat from './pages/Chat/Chat'
 
 
 function App() {
@@ -9,7 +10,8 @@ function App() {
   return (
    <>
     {/* <MainPage/> */}
-    <Login/>
+    {/* <Login/> */}
+    <Chat/>
    </>
   )
 }
