@@ -5,8 +5,7 @@ const dns = require('dns');
 
 dns.setServers(['0.0.0.0','1.1.1.1']);
 const http = require('http');
-const ws = require('ws');
-
+const socket = require('socket.io');
 const app = express();
 
 // middleware
@@ -19,12 +18,15 @@ app.use(express.json())
 const server = http.createServer(app);
 
 // create the websocket server on it and run on the same port
-const wss = new ws.Server({server:server});
+const wss = new socket.Server(server, {
+    cors: {
+        origin: "*"
+    }
+});
 
 // make connections
 wss.on("connection", (socket)=> {
     socket.send("user connected!")
-    console.log('A user is connected')
     
     socket.on('message', (message)=> {
         socket.send(message.toString());
