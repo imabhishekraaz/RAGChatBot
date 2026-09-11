@@ -26,6 +26,7 @@ const wss = new socket.Server(server, {
 
 // make connections
 wss.on("connection", (socket)=> {
+    // send the message when user connect to the server
     socket.send("user connected!")
     
     socket.on('message', (message)=> {
