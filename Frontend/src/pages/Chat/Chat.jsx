@@ -1,16 +1,22 @@
-import React from "react";
+import React, { useState } from "react";
 import { useEffect, useRef } from "react";
 import { ConnectSocket } from "../../ws";
 
 const Chat = ()=> {
     const socket = useRef(null);
+    const [msg, setMsg] = useState(null);
 
     useEffect(()=> {    
         socket.current = ConnectSocket();
-        // socket.current.on('connect', ()=> {
-        //     console.log('server is connected...')
-        // })
+        socket.current.on('connect', ()=> {
+            console.log('user is connected...')
+        })
     }, [])
+
+    const handleSubmit = ()=> {
+        const message = socket.current.emit("joinRoom", 'Abhishek Raj');
+        setMsg('Abhishek Raj')
+    }
 
     return (
         <>
@@ -24,8 +30,13 @@ const Chat = ()=> {
                 </div>
                 <div>
                     <input type="text" name="input" id="input" />
-                    <button>send</button>
+                    <p onClick={handleSubmit}>send</p>
                 </div>
+                {
+                    msg ? <div>
+                        {msg} <span>Joined a group.</span>
+                    </div> : <div>No message</div>
+                }
             </div>            
         </>
     )
