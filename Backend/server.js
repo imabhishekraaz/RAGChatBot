@@ -28,6 +28,10 @@ const wss = new socket.Server(server, {
 wss.on("connection", (socket)=> {
     // send the message when user connect to the server
     socket.send("user connected!")
+
+    socket.on("joinRoom", (userName) => {
+        console.log(userName, 'Joined a group!')
+    });
     
     socket.on('message', (message)=> {
         socket.send(message.toString());
