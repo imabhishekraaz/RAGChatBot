@@ -15,28 +15,33 @@ const Chat = ()=> {
 
     const handleSubmit = ()=> {
         const message = socket.current.emit("joinRoom", 'Abhishek Raj');
-        setMsg('Abhishek Raj')
     }
 
     return (
         <>
-            <div>
-                <div>
-                    <p>Chat Box</p>
-
+            <div className="grid  grid-rows-[10%_80%_10%] h-screen">
+                <div className=" text-center text-2xl">
+                    <h2 className="text-black font-bold">ChatBox</h2>
+                    <hr />
                 </div>
                 <div>
-                    message
+                    <h1>No message</h1>
                 </div>
-                <div>
-                    <input type="text" name="input" id="input" />
-                    <p onClick={handleSubmit}>send</p>
+                <div className="bg-blue-500 rounded-2xl grid grid-cols-[90%_10%]">
+                    <div>
+                        <textarea 
+                            className="px-5"
+                            name="text" 
+                            id="text"
+                            placeholder="Enter your message"
+                            cols={30}
+                            rows={2}></textarea>
+                    </div>
+                    <div className="">
+                        <button>send</button>
+                    </div>
                 </div>
-                {
-                    msg ? <div>
-                        {msg} <span>Joined a group.</span>
-                    </div> : <div>No message</div>
-                }
+               
             </div>            
         </>
     )
