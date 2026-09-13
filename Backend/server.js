@@ -26,8 +26,7 @@ const wss = new socket.Server(server, {
 
 // make connections
 wss.on("connection", (socket) => {
-    // send the message when user connect to the server
-    socket.send("user connected!")
+    console.log('client connected:', socket.id);
 
     // Join the user
     socket.on("joinRoom", async (userName) => {
@@ -38,22 +37,20 @@ wss.on("connection", (socket) => {
         // broadcast the details
         socket.to("group").emit("roomNotice", userName);
 
-        // Chat the user
+    });
+     // Chat the user
         socket.on('chat', (message) => {
             console.log(message)
 
-            wss.to("group").emit("userChat", message)
+            wss.to("group").emit("userChat", {
+                ...message,
+                senderId: socket.id
+            });
         });
 
-    });
-
-
-
-
-
     // close the connection
-    socket.on('close', () => {
-        console.log('close the server...');
+    socket.on('disconnect', (reason) => {
+        console.log('client disconnected:', socket.id, reason);
     })
 });
 
