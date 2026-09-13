@@ -15,21 +15,26 @@ const Chat = () => {
 
     useEffect(() => {
         socket.current = ConnectSocket();
+
         socket.current.on('connect', () => {
             console.log('user is connected...')
         });
 
         socket.current.on("userChat", (message) => {
-            // set the value the map
-            setMsg((prev) => [...prev, message]);
-            console.log(msg)
+            setMsg((prev) => [
+                ...prev,
+                {
+                    ...message,
+                    mine: message.senderId === socket.current.id
+                }
+            ]);
         });
 
         return () => {
-            socket.current.off("userChat")
+            socket.current.disconnect()
         }
 
-    }, [socket.current]);
+    }, []);
 
     // handle user login 
     const handleLogin = () => {
