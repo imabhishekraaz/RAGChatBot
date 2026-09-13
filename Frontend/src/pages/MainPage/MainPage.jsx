@@ -9,7 +9,7 @@ import CampusDesk from '../../components/CampusDesk/CampusDesk'
 const MainPage = () => {
     return (
         <>
-            <div className='wrapper'>
+            <div className='wrapper w-full bg-red-600'>
                 <div className='main-container'>
                     <nav className='nav'>
                         <div className='logo'>
