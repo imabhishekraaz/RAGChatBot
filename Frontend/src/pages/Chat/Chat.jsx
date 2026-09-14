@@ -41,6 +41,8 @@ const Chat = () => {
         if (userName === null) {
             return
         };
+
+        // adding the details in the vscode for commiting the files
         // set the login
         setIsLogin(true);
 
