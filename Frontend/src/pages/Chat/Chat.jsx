@@ -42,7 +42,7 @@ const Chat = () => {
             return
         };
 
-        // adding the details in the vscode for commiting the files
+        // adding the details in the vscode for commiting the files again i try to 
         // set the login
         setIsLogin(true);
 
@@ -52,6 +52,7 @@ const Chat = () => {
         socket.current.on("roomNotice", (userName) => {
             console.log(`${userName} joined the group!`)
         });
+
 
     };
 
