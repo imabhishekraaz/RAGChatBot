@@ -1,59 +1,42 @@
 const express = require('express');
-const { ConnectDatabase } = require('./src/config/db');
-const dotenv = require('dotenv').config();
-const dns = require('dns');
-
-dns.setServers(['0.0.0.0', '1.1.1.1']);
 const http = require('http');
-const socket = require('socket.io');
+const ws = require('socket.io');
 const app = express();
 
-// middleware
-app.use(express.json())
 
-// connect the database
-// ConnectDatabase();
-
-// create the http server and pass the express server on it.
+// create the HTTP server
 const server = http.createServer(app);
 
-// create the websocket server on it and run on the same port
-const wss = new socket.Server(server, {
+const io = new ws.Server(server, {
     cors: {
         origin: "*"
     }
 });
+const ROOM = 'room'
+io.on('connection', (socket)=> {
+    socket.on('connect', ()=> {
+        console.log('user connected...')
+    })
 
-// make connections
-wss.on("connection", (socket) => {
-    console.log('client connected:', socket.id);
+    // join the username
+    socket.on("joinChat", (username)=> {
 
-    // Join the user
-    socket.on("joinRoom", async (userName) => {
-        console.log(userName, 'Joined a group!')
+        socket.join(ROOM);
+        console.log(`${username} is joined.`)
 
-        await socket.join("group");
+        socket.to(ROOM).emit('join', username);
 
-        // broadcast the details
-        socket.to("group").emit("roomNotice", userName);
-
-    });
-     // Chat the user
-        socket.on('chat', (message) => {
+        socket.on('chat',(message)=> {
             console.log(message)
 
-            wss.to("group").emit("userChat", {
-                ...message,
-                senderId: socket.id
-            });
-        });
+            socket.to(ROOM).emit('chatBot',message);
+        })
+    });
 
-    // close the connection
-    socket.on('disconnect', (reason) => {
-        console.log('client disconnected:', socket.id, reason);
-    })
+    
 });
 
-server.listen(4000, () => {
+server.listen(4000, ()=> {
     console.log('server is running...');
 })
+

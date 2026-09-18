@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useEffect, useRef } from "react";
-import { ConnectSocket } from "../../ws";
+// import { ConnectSocket } from "../../ws";
+import { io } from 'socket.io-client';
 
 const Chat = () => {
     const socket = useRef(null);
@@ -13,26 +14,31 @@ const Chat = () => {
     ]);
     const [isTyping, setIsTyping] = useState("");
 
+    const ws = io('http://localhost:4000', {
+        autoConnect: false
+    });
+
     useEffect(() => {
-        socket.current = ConnectSocket();
 
+        socket.current = ws.connect();
         socket.current.on('connect', () => {
-            console.log('user is connected...')
+            console.log('user connected....')
+        });
+        socket.current.on("join", (username) => {
+            console.log("JOIN EVENT RECEIVED:", username);
         });
 
-        socket.current.on("userChat", (message) => {
-            setMsg((prev) => [
-                ...prev,
-                {
-                    ...message,
-                    mine: message.senderId === socket.current.id
-                }
-            ]);
-        });
+        socket.current.on('chatBot',(message)=> {
 
-        return () => {
-            socket.current.disconnect()
-        }
+            const newMsg = {
+                text :message,
+                mine: false
+            };
+            setMsg((prev)=> [...prev,newMsg]);
+        })
+
+       
+        return
 
     }, []);
 
@@ -46,14 +52,7 @@ const Chat = () => {
         // set the login
         setIsLogin(true);
 
-        // Joined the User to the chat
-        socket.current.emit("joinRoom", userName);
-
-        socket.current.on("roomNotice", (userName) => {
-            console.log(`${userName} joined the group!`)
-        });
-
-
+        socket.current.emit('joinChat', userName);
     };
 
     const handleMessage = () => {
@@ -65,12 +64,11 @@ const Chat = () => {
             text: isTyping,
             mine: true
         }
+        // working 
+        socket.current.emit('chat',isTyping)
+        setIsTyping((prev)=> [...prev, isTyping]);
 
-        // chat with the user
-        if (newMsg.text.trim() !== "") {
-            socket.current.emit("chat", newMsg);
-            setIsTyping("");
-        }
+        setIsTyping("");
     }
 
 
