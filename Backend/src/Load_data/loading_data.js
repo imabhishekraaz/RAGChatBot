@@ -1,15 +1,15 @@
-const fs = require('fs');
-const pdf_parse = require('pdf-parse');
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+import { DirectoryLoader } from "@langchain/classic/document_loaders/fs/directory";
+import { TextLoader } from "@langchain/classic/document_loaders/fs/text";
 
-const directory = '../../Data';
+// file path where the '.txt' file save
 
-const DirectoryLoader = async (directory) => {
-    const files = await fs.readFileSync(directory);
-    console.log(files.length)   
-}
+// load the file and return the file
+export const loadDirectory = async (directoryPath) => {
+    const loader = new DirectoryLoader(directoryPath, {
+        ".txt": (filePath) => new TextLoader(filePath),
+    });
 
-exports.loadTheData = async (directory) => {
-    console.log("Abhishek Raj");
+    return await loader.load();
 };
-
-DirectoryLoader(directory);

@@ -1,42 +1,33 @@
-const express = require('express');
-const http = require('http');
-const ws = require('socket.io');
-const app = express();
+import "dotenv/config";
 
+import { ConnectDatabase } from "./src/config/db.js";
+import { createChunking } from "./src/chunkings/chunking.js";
+import { storeChunks } from "./src/vectorStore/store.js";
 
-// create the HTTP server
-const server = http.createServer(app);
+async function main() {
+    try {
 
-const io = new ws.Server(server, {
-    cors: {
-        origin: "*"
+        console.log("1. Connecting database...");
+
+        await ConnectDatabase();
+
+        console.log("2. Creating chunks...");
+
+        const chunks = await createChunking();
+
+        console.log("3. Total chunks:", chunks.length);
+
+        console.log("4. Starting embedding + storage...");
+
+        await storeChunks(chunks);
+
+        console.log("5. DONE - Data stored in MongoDB");
+
+    } catch (error) {
+
+        console.error("Server Error:", error);
+
     }
-});
-const ROOM = 'room'
-io.on('connection', (socket)=> {
-    socket.on('connect', ()=> {
-        console.log('user connected...')
-    })
+}
 
-    // join the username
-    socket.on("joinChat", (username)=> {
-
-        socket.join(ROOM);
-        console.log(`${username} is joined.`)
-
-        socket.to(ROOM).emit('join', username);
-
-        socket.on('chat',(message)=> {
-            console.log(message)
-
-            socket.to(ROOM).emit('chatBot',message);
-        })
-    });
-
-    
-});
-
-server.listen(4000, ()=> {
-    console.log('server is running...');
-})
-
+main();
